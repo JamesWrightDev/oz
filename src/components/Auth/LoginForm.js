@@ -1,22 +1,26 @@
 import React, {useState} from "react";
 import { Button, Form, Input } from "semantic-ui-react";
-import Firebase, { auth } from '../../api/firebase';
+import { navigate } from "@reach/router"
+import { auth } from '../../api/firebase';
+import { useDispatch } from 'react-redux';
+import StyledError from '../../styles/StyledError';
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState(false);
+  const dispatch = useDispatch();
 
   const handleSubmit = () => {
     auth.signInWithEmailAndPassword(email, password)
     .then((response) => {
-      console.log(response);
+      dispatch({ type: 'auth/userAuthSuccess'});
+      navigate('/browse');
     })
     .catch((error) => {
-      var errorCode = error.code;
-      var errorMessage = error.message;
+      const errorMessage = error.message;
+      setError(errorMessage)
     });
-    setPassword('');
-    setEmail('');
   }
 
   return (
@@ -28,6 +32,7 @@ const LoginForm = () => {
           iconPosition="left"
           placeholder="Email"
           onChange={(e) => setEmail(e.target.value)}
+          value={email}
           required
           />
       </Form.Field>
@@ -40,11 +45,15 @@ const LoginForm = () => {
           placeholder="Password"
           required
           onChange={(e) => setPassword(e.target.value)}
+          value={password}
         />
       </Form.Field>
-      <Button fluid primary type="submit" onClick={() => handleSubmit()}>
+      <Button fluid color="teal" type="submit" onClick={() => handleSubmit()}>
         Log In
       </Button>
+      {
+        error && <StyledError>{error}</StyledError>
+      }
     </Form>
   );
 };

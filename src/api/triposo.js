@@ -4,4 +4,11 @@ async function fetchTours()
   let data = await response.json()
   return data;
 }
+
+export async function fetchTourById(id)
+{
+  let response = await fetch(`https://www.triposo.com/api/20200405/tour.json?id=${id}&account=J1PZNGHJ&token=nxhzsjtnlt0jw7n30yhgebkre1hisqd6`);
+  let data = await response.json()
+  return data;
+}
 export default fetchTours;

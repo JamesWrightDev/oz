@@ -1,18 +1,22 @@
-import React from 'react';
-import Home from './pages/Home';
-import Browse from './pages/Browse';
-import Auth from './pages/Auth';
+import React from "react";
+import Home from "./pages/Home";
+import Browse from "./pages/Browse";
+import Details from './pages/Details';
 import { Router } from "@reach/router";
-import 'semantic-ui-css/semantic.min.css'
+import "semantic-ui-css/semantic.min.css";
+import store from "./redux/store";
+import { Provider } from 'react-redux'
 
 const App = () => {
   return (
-    <Router>
-      <Home path="/" />
-      <Browse path="/browse" />
-      <Auth path="/signin" />
-    </Router>
+    <Provider store={store}>
+      <Router>
+        <Home path="/" />
+        <Browse path="/browse"/>
+        <Details path="/browse/:tourId"/>
+      </Router>
+    </Provider>
   );
-}
+};
 
 export default App;
