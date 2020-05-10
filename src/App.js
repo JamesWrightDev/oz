@@ -11,7 +11,7 @@ const App = () => {
   return (
     <Provider store={store}>
       <Router>
-        <Home path="/" />
+        <Home path="/" default/>
         <Browse path="/browse"/>
         <Details path="/browse/:tourId"/>
       </Router>
