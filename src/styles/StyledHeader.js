@@ -28,12 +28,16 @@ export const StyledHeader = styled.header`
   }
 
   .c-header__filter {
-    backdrop-filter: blur(10px);
+    background: white;
     position: absolute;
     top: 0;
     left: 0;
     height: 100%;
     width: 100%;
+    @supports (backdrop-filter: blur(10px)) {
+      backdrop-filter: blur(10px);
+      background: none;
+    }
   }
 
   h1 {

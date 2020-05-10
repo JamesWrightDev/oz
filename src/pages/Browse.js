@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import TourCard from "../components/TourCard";
-import fetchTours from "../api/triposo";
-import { Loader, Container, Menu, Input } from "semantic-ui-react";
+import fetchTours, {fetchToursByQuery} from "../api/triposo";
+import { Loader, Container, Menu, Input, Button } from "semantic-ui-react";
 import Wrapper from "../styles/Wrapper";
 
 import { useSelector } from "react-redux";
@@ -11,7 +11,6 @@ const Browse = () => {
   const [tours, setTours] = useState(false);
   const [loading, setLoading] = useState(true);
   const [maxPrice, setMaxPrice] = useState(false);
-  const [searchTerms, setSearchTerms] = useState([]);
   const [minMax, setMinMax] = useState({ min: 0, max: 99 });
   const [filteredTours, setFilteredTours] = useState(false);
 
@@ -25,56 +24,70 @@ const Browse = () => {
     setFilteredTours(filteredTours);
   };
 
-  const filterByTerms = (input) => {
-    const filteredTours = tours.filter((item => {
-      return item.name.toLowerCase().includes(input.toLowerCase())
-    }))
-    setFilteredTours(filteredTours);
-  }
-
   const handleSearchEnter = (e, input) => {
     if(e.key === 'Enter'){
-      setSearchTerms([...searchTerms, input])
-      filterByTerms(input);
+      setLoading(true);
+      if(input === '') {
+        fetchTours().then((data) => {
+          setTours(data.results);
+          setFilteredTours(data.results);
+          setLoading(false);
+        });
+      }
+      const querySearch = fetchToursByQuery(input);
+      querySearch.then(response => {
+        setTours(response.results);
+        setLoading(false);
+      })
     }
   }
-
-  useEffect(() => {
+  const fetchAll = () => {
     setLoading(true);
     fetchTours().then((data) => {
       setTours(data.results);
       setFilteredTours(data.results);
       setLoading(false);
-      setMinMax({
-        min: Math.round(Math.min.apply(
-          Math,
-          data.results.map((tour) => {
-            return tour.price.amount;
-          }))
-        ),
-        max: Math.round(Math.max.apply(
-          Math,
-          data.results.map((tour) => {
-            return tour.price.amount;
-          })
-        ) + 1),
-      });
-      setMaxPrice(
-        Math.round(Math.max.apply(
-          Math,
-          data.results.map((tour) => {
-            return tour.price.amount;
-          })
-        ) + 1)
-      );
     });
+  }
+  useEffect(() => {
+    if(!tours) return;
+    setLoading(true);
+    setFilteredTours(tours);
+
+    setMinMax({
+      min: Math.round(Math.min.apply(
+        Math,
+        tours.map((tour) => {
+          return tour.price.amount;
+        }))
+      ),
+      max: Math.round(Math.max.apply(
+        Math,
+        tours.map((tour) => {
+          return tour.price.amount;
+        })
+      ) + 1),
+    });
+    setMaxPrice(
+      Math.round(Math.max.apply(
+        Math,
+        tours.map((tour) => {
+          return tour.price.amount;
+        })
+      ) + 1)
+    );
+    setLoading(false);
+  }, [tours]);
+
+  useEffect(() => {
+    fetchAll();
   }, []);
 
   return (
     <Layout>
       <Wrapper>
         <Container>
-          <Menu fixed borderless>
+          <Menu fixed borderless stackable>
             <Menu.Item>
               <Input
                 className="icon"
@@ -82,6 +95,7 @@ const Browse = () => {
                 placeholder="Search..."
                 onKeyDown={(e) => handleSearchEnter(e, e.target.value)}
                 />
+                <Button onClick={() => fetchAll()}>Clear</Button>
             </Menu.Item>
             <Menu.Item position="right">
               {maxPrice && (
@@ -92,7 +106,7 @@ const Browse = () => {
                     min={minMax.min}
                     max={minMax.max}
                     type="range"
-                    step={1}
+                    step={30}
                     value={maxPrice}
                     onChange={(e) => filterTours(e.target.value)}
                   />

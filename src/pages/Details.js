@@ -6,11 +6,11 @@ import StyledDetails from "../styles/StyledDetails";
 import Hero from "../components/Hero";
 import { fetchTourById } from "../api/triposo";
 import { Rating, Loader, Container, Button, Grid } from "semantic-ui-react";
+import { createMarkup } from "../util/createMarkup";
 
 const Details = (props) => {
   const [tour, setTour] = useState(false);
   const [loading, setLoading] = useState(true);
-  console.log(tour);
   useEffect(() => {
     setLoading(true);
     fetchTourById(props.tourId).then((data) => {
@@ -28,6 +28,12 @@ const Details = (props) => {
           <Wrapper>
             <Container>
               <StyledDetails>
+                <div
+                  className="details__description"
+                  dangerouslySetInnerHTML={createMarkup(
+                    tour.content.sections[0].body
+                  )}
+                ></div>
                 <div className="details__rating">
                   <div className="details__item">
                     <h3 class="details__subheader">Rating</h3>
@@ -41,7 +47,9 @@ const Details = (props) => {
                   </div>
                   <div className="details__item">
                     <h3 className="details__subheader">Price</h3>
-                    <span className="details__price">€ {tour.price.amount}</span>
+                    <span className="details__price">
+                      € {tour.price.amount}
+                    </span>
                   </div>
                 </div>
 

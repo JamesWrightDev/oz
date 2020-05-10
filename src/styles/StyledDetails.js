@@ -24,6 +24,15 @@ const StyledDetails = styled.div`
     padding: 24px 0;
   }
 
+  .details__description {
+    max-width: 80%;
+    margin: 0 auto;
+    p {
+      font-size: 16px;
+      line-height: 2;
+    }
+  }
+
   .details__rating {
     text-align: center;
     width: 50%;

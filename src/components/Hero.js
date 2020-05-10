@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { Button, Grid } from "semantic-ui-react";
 import { navigate } from "@reach/router";
+import { device } from '../styles/mq';
 
 const Hero = (props) => {
   return (
@@ -53,10 +54,14 @@ const StyledHero = styled.div`
     transform: translate(-50%, -50%);
   }
   .c-hero__text {
-    font-size: ${(props) => (props.small ? "4rem" : "7rem")};
+    font-size: ${(props) => (props.small ? "4rem" : "4rem")};
     color: white;
     text-align: center;
     text-transform: uppercase;
+
+    @media ${device.mobile} {
+      font-size: ${(props) => (props.small ? "4rem" : "7rem")};
+    }
   }
 
   .c-hero__image {
